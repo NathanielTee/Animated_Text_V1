@@ -1,0 +1,101 @@
+<html lang="en" class="-webkit-">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Animated Teks Sederhana" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Nathaniel Tee" />
+
+    <link rel="shortcut icon" href="Profil.jpg" type="image/x-icon" />
+
+    <title>Animated Teks</title>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i");
+      body {
+        text-align: center;
+        background-color: #0c0c0c;
+        color: #fff;
+        font-family: "roboto";
+        font-size: 6.25rem;
+        font-weight: 900;
+        line-height: 100vh;
+        white-space: nowrap;
+      }
+
+      .blinking-cursor {
+        user-select: none;
+        animation: blink 1s steps(2, start) infinite;
+      }
+      @keyframes blink {
+        to {
+          visibility: hidden;
+        }
+      }
+    </style>
+
+    <script src="1.js"></script>
+
+    <script>
+      window.console = window.console || function (t) {};
+    </script>
+
+    <script src="2.js"></script>
+  </head>
+
+  <body translate="no">
+    <span is="type-async" id="type-text">...</span>
+    <span class="blinking-cursor">_</span>
+
+    <script id="rendered-js">
+      async function init() {
+        const node = document.querySelector("#type-text");
+
+        await sleep(1000);
+        node.innerText = "";
+        await node.type("Hi, ");
+        //Ganti Teks Disini
+        while (true) {
+          if (window.CP.shouldStopExecution(0)) break;
+          await node.type("Welcome!");
+          await sleep(2000);
+          await node.delete("Hi, Welcome!");
+          await node.type("Gabut Bang");
+          await sleep(2000);
+          await node.delete("Gabut Bang");
+          await node.type("NATH TEE");
+          await sleep(2000);
+          await node.delete("NATH TEE");
+        }
+        window.CP.exitedLoop(0);
+      }
+
+      const sleep = (time) =>
+        new Promise((resolve) => setTimeout(resolve, time));
+
+      class TypeAsync extends HTMLSpanElement {
+        get typeInterval() {
+          const randomMs = 100 * Math.random();
+          return randomMs < 50 ? 10 : randomMs;
+        }
+
+        async type(text) {
+          for (let character of text) {
+            this.innerText += character;
+            await sleep(this.typeInterval);
+          }
+        }
+
+        async delete(text) {
+          for (let character of text) {
+            this.innerText = this.innerText.slice(0, this.innerText.length - 1);
+            await sleep(this.typeInterval);
+          }
+        }
+      }
+
+      customElements.define("type-async", TypeAsync, { extends: "span" });
+
+      init();
+    </script>
+  </body>
+</html>
